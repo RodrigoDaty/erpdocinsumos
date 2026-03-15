@@ -12,6 +12,7 @@ import Usuarios from "./pages/Usuarios";
 import Permissoes from "./pages/Permissoes";
 import Insumos from "./pages/Insumos";
 import Estoque from "./pages/Estoque";
+import GestaoAtivos from "./pages/GestaoAtivos";
 import VisaoGeral from "./pages/operator/VisaoGeral";
 import GestaoEstoque from "./pages/operator/GestaoEstoque";
 import ConsultaConsumo from "./pages/operator/ConsultaConsumo";
