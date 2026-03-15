@@ -59,7 +59,7 @@ const App = () => (
             <Route path="/op/relatorios/movimentacao" element={<OperatorGuard><MovimentacaoEstoque /></OperatorGuard>} />
             <Route path="/op/relatorios/consumo-cliente" element={<OperatorGuard><ConsumoPorCliente /></OperatorGuard>} />
             {/* Placeholder routes */}
-            <Route path="/op/clientes" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
+            <Route path="/op/clientes" element={<OperatorGuard><Clientes /></OperatorGuard>} />
             <Route path="/op/contratos" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/sites" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/equipamentos" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
