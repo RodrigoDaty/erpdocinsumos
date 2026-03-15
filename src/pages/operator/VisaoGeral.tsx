@@ -128,7 +128,7 @@ export default function VisaoGeral() {
                   </div>
                 </div>
               ))}
-              <Button variant="outline" className="w-full text-sm">
+              <Button variant="outline" className="w-full text-sm" onClick={notify}>
                 Ver Todas Notificações
               </Button>
             </CardContent>
