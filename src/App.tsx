@@ -43,6 +43,7 @@ const App = () => (
             <Route path="/op/relatorios" element={<OperatorGuard><ConsultaConsumo /></OperatorGuard>} />
             <Route path="/op/solicitacoes" element={<OperatorGuard><LiberacaoInsumos /></OperatorGuard>} />
             <Route path="/op/solicitacoes/nova" element={<OperatorGuard><NovaSolicitacao /></OperatorGuard>} />
+            <Route path="/op/reposicao" element={<OperatorGuard><ReposicaoEstoque /></OperatorGuard>} />
             {/* Placeholder routes for sidebar links */}
             <Route path="/op/clientes" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/contratos" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
