@@ -54,6 +54,7 @@ export function OperatorLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [reportsOpen, setReportsOpen] = useState(location.pathname.startsWith("/op/relatorios"));
 
   const handleLogout = () => {
     logout();
