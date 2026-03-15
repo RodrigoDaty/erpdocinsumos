@@ -105,6 +105,44 @@ export function OperatorLayout({ children }: { children: ReactNode }) {
               </Link>
             );
           })}
+
+          {/* Reports expandable section */}
+          <button
+            onClick={() => setReportsOpen(!reportsOpen)}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors w-full",
+              location.pathname.startsWith("/op/relatorios")
+                ? "text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <BarChart3 className="h-[18px] w-[18px]" />
+            Relatórios
+            <ChevronDown className={cn("h-4 w-4 ml-auto transition-transform", reportsOpen && "rotate-180")} />
+          </button>
+          {reportsOpen && (
+            <div className="ml-4 pl-3 border-l border-border space-y-0.5">
+              {reportSubItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </nav>
 
         <div className="p-4 border-t border-border">
