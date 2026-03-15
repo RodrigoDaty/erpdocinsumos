@@ -18,10 +18,25 @@ import {
   Menu,
   X,
   Plus,
+  ChevronDown,
+  AlertTriangle,
+  CalendarCheck,
+  ArrowLeftRight,
+  UserCheck,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+const reportSubItems = [
+  { icon: BarChart3, label: "Consumo Geral", path: "/op/relatorios" },
+  { icon: RotateCcw, label: "Gestão de RMAs", path: "/op/relatorios/rmas" },
+  { icon: AlertTriangle, label: "Exceções", path: "/op/relatorios/excecoes" },
+  { icon: CalendarCheck, label: "Fechamento Mensal", path: "/op/relatorios/fechamento" },
+  { icon: ArrowLeftRight, label: "Movimentação", path: "/op/relatorios/movimentacao" },
+  { icon: UserCheck, label: "Consumo por Cliente", path: "/op/relatorios/consumo-cliente" },
+];
 
 const navItems = [
   { icon: LayoutDashboard, label: "Visão Geral", path: "/op/visao-geral" },
@@ -31,7 +46,6 @@ const navItems = [
   { icon: Printer, label: "Equipamentos", path: "/op/equipamentos" },
   { icon: Package, label: "Estoque", path: "/op/estoque" },
   { icon: ClipboardList, label: "Solicitações", path: "/op/solicitacoes" },
-  { icon: BarChart3, label: "Relatórios", path: "/op/relatorios" },
   { icon: Shield, label: "Permissões", path: "/op/permissoes-op" },
 ];
 
@@ -40,6 +54,7 @@ export function OperatorLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [reportsOpen, setReportsOpen] = useState(location.pathname.startsWith("/op/relatorios"));
 
   const handleLogout = () => {
     logout();
@@ -90,6 +105,44 @@ export function OperatorLayout({ children }: { children: ReactNode }) {
               </Link>
             );
           })}
+
+          {/* Reports expandable section */}
+          <button
+            onClick={() => setReportsOpen(!reportsOpen)}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors w-full",
+              location.pathname.startsWith("/op/relatorios")
+                ? "text-primary"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            )}
+          >
+            <BarChart3 className="h-[18px] w-[18px]" />
+            Relatórios
+            <ChevronDown className={cn("h-4 w-4 ml-auto transition-transform", reportsOpen && "rotate-180")} />
+          </button>
+          {reportsOpen && (
+            <div className="ml-4 pl-3 border-l border-border space-y-0.5">
+              {reportSubItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors",
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </nav>
 
         <div className="p-4 border-t border-border">
