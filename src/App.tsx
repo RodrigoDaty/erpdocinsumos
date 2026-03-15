@@ -24,6 +24,7 @@ import RelatorioFechamento from "./pages/operator/RelatorioFechamento";
 import MovimentacaoEstoque from "./pages/operator/MovimentacaoEstoque";
 import RelatorioConsumo from "./pages/operator/RelatorioConsumo";
 import ConsumoPorCliente from "./pages/operator/ConsumoPorCliente";
+import Clientes from "./pages/operator/Clientes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
