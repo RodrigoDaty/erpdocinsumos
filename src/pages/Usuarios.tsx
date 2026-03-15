@@ -88,7 +88,7 @@ export default function Usuarios() {
             <CardContent className="p-5">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acessos Pendentes</p>
               <p className="text-3xl font-bold text-destructive mt-1">14</p>
-              <Link to="#" className="text-xs text-primary font-medium hover:underline">Revisar fila</Link>
+              <Link to="/permissoes" className="text-xs text-primary font-medium hover:underline">Revisar fila</Link>
             </CardContent>
           </Card>
         </div>
