@@ -20,7 +20,9 @@ export default function Login() {
     e.preventDefault();
     const success = login(email, password);
     if (success) {
-      navigate("/dashboard");
+      // Admin goes to admin dashboard, operators go to operator portal
+      const user = email === "admin@empresa.com.br" ? "admin" : "operator";
+      navigate(user === "admin" ? "/dashboard" : "/op/visao-geral");
     } else {
       toast({
         variant: "destructive",
