@@ -38,7 +38,7 @@ const skuItems = [
   { name: "Toner Brother TN-750", sku: "SKU: 1104-TN7", percent: 12, qty: "08 unidades", status: "RASH POINT", statusColor: "text-destructive" },
   { name: "Cilindro Lexmark MS811", sku: "SKU: 50F0Z00", percent: 3, qty: "02 unidades", status: "ESTOQUE CRÍTICO", statusColor: "text-destructive" },
 ];
-
+  return (
 export default function VisaoGeral() {
   const { toast } = useToast();
   const navigate = useNavigate();
