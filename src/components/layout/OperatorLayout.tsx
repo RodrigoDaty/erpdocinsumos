@@ -18,6 +18,12 @@ import {
   Menu,
   X,
   Plus,
+  ChevronDown,
+  AlertTriangle,
+  CalendarCheck,
+  ArrowLeftRight,
+  UserCheck,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
