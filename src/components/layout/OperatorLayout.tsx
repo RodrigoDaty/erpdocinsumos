@@ -29,6 +29,15 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const reportSubItems = [
+  { icon: BarChart3, label: "Consumo Geral", path: "/op/relatorios" },
+  { icon: RotateCcw, label: "Gestão de RMAs", path: "/op/relatorios/rmas" },
+  { icon: AlertTriangle, label: "Exceções", path: "/op/relatorios/excecoes" },
+  { icon: CalendarCheck, label: "Fechamento Mensal", path: "/op/relatorios/fechamento" },
+  { icon: ArrowLeftRight, label: "Movimentação", path: "/op/relatorios/movimentacao" },
+  { icon: UserCheck, label: "Consumo por Cliente", path: "/op/relatorios/consumo-cliente" },
+];
+
 const navItems = [
   { icon: LayoutDashboard, label: "Visão Geral", path: "/op/visao-geral" },
   { icon: Users, label: "Clientes", path: "/op/clientes" },
@@ -37,7 +46,6 @@ const navItems = [
   { icon: Printer, label: "Equipamentos", path: "/op/equipamentos" },
   { icon: Package, label: "Estoque", path: "/op/estoque" },
   { icon: ClipboardList, label: "Solicitações", path: "/op/solicitacoes" },
-  { icon: BarChart3, label: "Relatórios", path: "/op/relatorios" },
   { icon: Shield, label: "Permissões", path: "/op/permissoes-op" },
 ];
 
