@@ -25,10 +25,10 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Users, label: "Usuários", path: "/usuarios" },
   { icon: Shield, label: "Permissões", path: "/permissoes" },
+  { icon: Printer, label: "Gestão de Ativos", path: "/gestao-ativos" },
   { icon: Building2, label: "Unidades", path: "/unidades" },
   { icon: Package, label: "Estoque", path: "/estoque" },
   { icon: FileText, label: "Solicitações", path: "/solicitacoes" },
-  { icon: Printer, label: "Insumos", path: "/insumos" },
 ];
 
 export function AdminLayout({ children }: { children: ReactNode }) {
