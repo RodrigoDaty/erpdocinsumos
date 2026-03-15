@@ -54,6 +54,9 @@ const movements = [
 export default function GestaoEstoque() {
   const [clienteFilter, setClienteFilter] = useState("todos");
   const [tipoFilter, setTipoFilter] = useState("todos");
+  const notify = () => {
+    const event = new CustomEvent("toast", { detail: { title: "Em desenvolvimento", description: "Esta funcionalidade será implementada em breve." } });
+  };
 
   return (
     <OperatorLayout>
