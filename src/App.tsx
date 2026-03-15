@@ -17,6 +17,7 @@ import GestaoEstoque from "./pages/operator/GestaoEstoque";
 import ConsultaConsumo from "./pages/operator/ConsultaConsumo";
 import LiberacaoInsumos from "./pages/operator/LiberacaoInsumos";
 import NovaSolicitacao from "./pages/operator/NovaSolicitacao";
+import ReposicaoEstoque from "./pages/operator/ReposicaoEstoque";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
