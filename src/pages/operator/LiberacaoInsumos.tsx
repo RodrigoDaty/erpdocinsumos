@@ -9,196 +9,220 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Clock, ChevronRight, BarChart3, RefreshCw } from "lucide-react";
+import {
+  ShieldCheck, BarChart3, MapPin, ChevronRight, ArrowUpRight, Clock, User,
+} from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
-const sites = [
-  { code: "SP-01 Centro", items: "54 Itens em Estoque", status: "Estável", statusColor: "text-primary" },
-  { code: "RJ-04 Barra", items: "08 Itens em Estoque", status: "Crítico", statusColor: "text-destructive" },
-  { code: "RS-02 Porto Alegre", items: "122 Itens em Estoque", status: "Abastecido", statusColor: "text-muted-foreground" },
+const releases = [
+  { time: "Hoje, 14:22", site: "SP-Centro", user: "Analista SAC", insumo: "Toner Yellow HP", qty: "12", os: "OS-2024-912" },
+  { time: "Hoje, 10:15", site: "RJ-Barra", user: "Analista SAC", insumo: "Papel Glossy 180g", qty: "25", os: "OS-2024-899" },
+  { time: "Ontem, 16:45", site: "PR-Industrial", user: "Suporte Central", insumo: "Kit Limpeza Ind.", qty: "04", os: "OS-2024-845" },
 ];
 
-const recentReleases = [
-  { date: "Hoje, 14:22", site: "SP-Centro", insumo: "Toner Yellow HP", qty: 12, os: "OS-2024-912", status: "EFETUADO" },
-  { date: "Hoje, 10:15", site: "RJ-Barra", insumo: "Papel Glossy 180g", qty: 25, os: "OS-2024-899", status: "EFETUADO" },
-  { date: "Ontem, 16:45", site: "PR-Industrial", insumo: "Kit Limpeza Ind.", qty: 4, os: "OS-2024-845", status: "EFETUADO" },
+const sites = [
+  { code: "SP-01 Centro", items: "54 Itens em Estoque", status: "Estável", statusColor: "text-primary", barColor: "bg-primary" },
+  { code: "RJ-04 Barra", items: "08 Itens em Estoque", status: "Crítico", statusColor: "text-destructive", barColor: "bg-destructive", border: true },
+  { code: "RS-02 Porto Alegre", items: "122 Itens em Estoque", status: "Abastecido", statusColor: "text-secondary-foreground", barColor: "bg-secondary" },
 ];
 
 export default function LiberacaoInsumos() {
+  const { user } = useAuth();
+  const [siteDestino, setSiteDestino] = useState("");
+  const [insumo, setInsumo] = useState("");
+
   return (
     <OperatorLayout>
-      <div className="space-y-6">
-        <div className="flex items-start justify-between">
+      <div className="space-y-8 max-w-[1400px] mx-auto">
+        {/* Header */}
+        <div className="flex items-end justify-between border-b border-border pb-6">
           <div>
-            <h1 className="text-2xl font-bold">Liberação de Insumos</h1>
-            <p className="text-muted-foreground text-sm mt-1">Distribuição controlada por Site/Unidade Física</p>
+            <h1 className="text-4xl font-extrabold tracking-tight">Liberação de Insumos</h1>
+            <p className="text-muted-foreground mt-2 text-lg">Distribuição controlada por Site/Unidade Física</p>
           </div>
-          <Card className="px-4 py-2">
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Status Global</p>
-                <p className="text-sm font-bold text-primary">84% de Capacidade</p>
-              </div>
-              <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-primary" />
-              </div>
+          <div className="bg-muted px-4 py-2 rounded-lg flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-widest leading-none">Status Global</p>
+              <p className="text-sm font-bold text-primary">84% de Capacidade</p>
             </div>
-          </Card>
+            <div className="w-12 h-12 flex items-center justify-center bg-primary/10 rounded-full">
+              <BarChart3 className="h-5 w-5 text-primary" />
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Config Form */}
-          <Card className="lg:col-span-2">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-4">
-                  <h2 className="text-lg font-bold">Configuração</h2>
-                  <p className="text-xs text-muted-foreground">
+        <div className="grid grid-cols-12 gap-8">
+          {/* Left Column */}
+          <div className="col-span-12 lg:col-span-8 space-y-8">
+            {/* Form Card */}
+            <Card className="overflow-hidden">
+              <div className="flex flex-col md:flex-row">
+                <div className="md:w-1/3 bg-muted/50 p-8 border-r border-border">
+                  <h3 className="text-xl font-bold mb-4">Configuração</h3>
+                  <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
                     Selecione o destino e defina a volumetria exata para liberação de estoque centralizado.
                   </p>
-                  <Card className="bg-primary/5 border-primary/20">
-                    <CardContent className="p-4">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Estoque Disponível</p>
-                      <div className="flex items-baseline gap-1 mt-1">
-                        <span className="text-3xl font-bold text-primary">14.2k</span>
-                        <span className="text-sm text-muted-foreground">und</span>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="p-4 bg-card rounded-lg border-l-4 border-primary shadow-sm">
+                    <p className="text-[10px] font-bold text-primary uppercase">Estoque Disponível</p>
+                    <p className="text-2xl font-bold">14.2k <span className="text-xs font-normal text-muted-foreground">und</span></p>
+                  </div>
                 </div>
+                <div className="flex-1 p-8 space-y-6">
+                  <div className="grid grid-cols-2 gap-6 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                    <div>
+                      <p className="text-[10px] font-bold text-primary uppercase mb-1">Operador Atual</p>
+                      <p className="text-sm font-semibold flex items-center gap-2">
+                        <User className="h-4 w-4" /> {user?.name ?? "Analista SAC"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold text-primary uppercase mb-1">Data/Hora</p>
+                      <p className="text-sm font-semibold">{new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
+                    </div>
+                  </div>
 
-                <div className="md:col-span-2 space-y-4">
                   <div>
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Selecione o Site de Destino</Label>
-                    <Select defaultValue="sp01">
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
+                    <Label className="text-xs font-bold uppercase tracking-wide mb-2 block">Selecione o Site de Destino</Label>
+                    <Select value={siteDestino} onValueChange={setSiteDestino}>
+                      <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="sp01">Filial São Paulo - Centro (SP01)</SelectItem>
                         <SelectItem value="rj04">Filial Rio de Janeiro - Barra (RJ04)</SelectItem>
-                        <SelectItem value="rs02">Filial Porto Alegre (RS02)</SelectItem>
+                        <SelectItem value="rs02">CD Extremo Sul - Porto Alegre (RS02)</SelectItem>
+                        <SelectItem value="pr01">Unidade Curitiba - Industrial (PR01)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Insumo (Item da Matriz)</Label>
-                    <Select defaultValue="toner-mag">
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
+                    <Label className="text-xs font-bold uppercase tracking-wide mb-2 block">Insumo (Item da Matriz)</Label>
+                    <Select value={insumo} onValueChange={setInsumo}>
+                      <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="toner-mag">Toner Magenta HP M553 High Yield (CF363X)</SelectItem>
-                        <SelectItem value="toner-cyn">Toner Cyan HP M553 High Yield (CF361X)</SelectItem>
-                        <SelectItem value="papel-a4">Papel A4 Alkaline 75g</SelectItem>
+                        <SelectItem value="toner-m">Toner Magenta HP M553 High Yield (CF363X)</SelectItem>
+                        <SelectItem value="papel-g">Papel Fotográfico Glossy A4 180g (CX-500)</SelectItem>
+                        <SelectItem value="cilindro">Cilindro Imaging Drum Brother DR3400</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Quantidade a Liberar</Label>
-                      <Input type="number" defaultValue={0} className="mt-1" />
+                      <Label className="text-xs font-bold uppercase tracking-wide mb-2 block">Quantidade a Liberar</Label>
+                      <Input type="number" placeholder="0" />
                     </div>
                     <div>
-                      <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Número da O.S.</Label>
-                      <Input placeholder="Ex: OS-2024-889" className="mt-1" />
+                      <Label className="text-xs font-bold uppercase tracking-wide mb-2 block">Número da O.S.</Label>
+                      <Input placeholder="Ex: OS-2024-889" />
                     </div>
                   </div>
 
-                  <Button className="w-full gap-2 mt-2">
-                    <CheckCircle className="h-4 w-4" />
-                    Liberar para Site
+                  <Button className="w-full py-5 font-bold text-base gap-2 rounded-xl">
+                    <ShieldCheck className="h-5 w-5" /> Liberar para Site
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </Card>
 
-          {/* Monitor de Sites */}
-          <div className="space-y-4">
-            <Card>
-              <CardHeader className="pb-2">
+            {/* Recent Releases */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Log de Liberações Recentes</h3>
+                <Button variant="link" className="text-xs font-bold text-primary">Ver Histórico Completo</Button>
+              </div>
+              <Card>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest">Data/Hora</TableHead>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest">Site Destino</TableHead>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest">Usuário</TableHead>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest">Insumo</TableHead>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest">Qtd</TableHead>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest">O.S.</TableHead>
+                      <TableHead className="text-[10px] uppercase font-bold tracking-widest text-right">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {releases.map((r, i) => (
+                      <TableRow key={i}>
+                        <TableCell className="text-muted-foreground">{r.time}</TableCell>
+                        <TableCell className="font-semibold">{r.site}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                              <User className="h-3 w-3 text-primary" />
+                            </div>
+                            <span className="text-xs font-medium">{r.user}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{r.insumo}</TableCell>
+                        <TableCell className="font-mono font-bold">{r.qty}</TableCell>
+                        <TableCell>
+                          <span className="text-xs font-medium bg-muted px-2 py-0.5 rounded">{r.os}</span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="default" className="text-[10px] uppercase">Efetuado</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="col-span-12 lg:col-span-4 space-y-8">
+            {/* Sites Monitor */}
+            <Card className="bg-muted/30">
+              <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-bold">Monitor de Sites</CardTitle>
-                  <Button variant="ghost" size="icon"><RefreshCw className="h-4 w-4" /></Button>
+                  <CardTitle className="font-bold">Monitor de Sites</CardTitle>
+                  <MapPin className="h-5 w-5 text-muted-foreground" />
                 </div>
               </CardHeader>
-              <CardContent className="space-y-2">
-                {sites.map((site, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors">
-                    <div className={`w-1 h-8 rounded-full ${site.statusColor === "text-destructive" ? "bg-destructive" : "bg-primary"}`} />
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold">{site.code}</p>
-                      <p className="text-[10px] text-muted-foreground">{site.items}</p>
+              <CardContent className="space-y-3">
+                {sites.map((s, i) => (
+                  <div
+                    key={i}
+                    className={`bg-card p-4 rounded-lg flex items-center justify-between cursor-pointer hover:shadow-md transition-shadow ${s.border ? "border border-destructive/20" : ""}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-2 h-10 ${s.barColor} rounded-full`} />
+                      <div>
+                        <p className="text-xs font-bold">{s.code}</p>
+                        <p className="text-[10px] text-muted-foreground">{s.items}</p>
+                      </div>
                     </div>
-                    <span className={`text-xs font-semibold ${site.statusColor}`}>{site.status}</span>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    <div className="text-right flex items-center gap-2">
+                      <p className={`text-xs font-bold ${s.statusColor}`}>{s.status}</p>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </div>
                   </div>
                 ))}
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Card className="bg-primary text-primary-foreground">
-                <CardContent className="p-4 text-center">
-                  <RefreshCw className="h-5 w-5 mx-auto mb-2 opacity-80" />
-                  <p className="text-2xl font-bold">452</p>
-                  <p className="text-[10px] uppercase tracking-wider opacity-80">Liberações/Mês</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <Clock className="h-5 w-5 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-2xl font-bold">14m</p>
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Tempo Médio Processo</p>
-                </CardContent>
-              </Card>
+            {/* Bento Stats */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-primary text-primary-foreground p-6 rounded-xl flex flex-col justify-between aspect-square">
+                <ArrowUpRight className="h-5 w-5" />
+                <div>
+                  <p className="text-3xl font-black">452</p>
+                  <p className="text-[10px] uppercase font-bold opacity-80">Liberações/Mês</p>
+                </div>
+              </div>
+              <div className="bg-muted p-6 rounded-xl flex flex-col justify-between aspect-square">
+                <Clock className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="text-3xl font-black">14m</p>
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Tempo Médio Processo</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Log de Liberações */}
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Log de Liberações Recentes</CardTitle>
-              <Button variant="link" className="text-primary text-xs p-0 h-auto">Ver Histórico Completo</Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-[10px] uppercase">Data/Hora</TableHead>
-                  <TableHead className="text-[10px] uppercase">Site Destino</TableHead>
-                  <TableHead className="text-[10px] uppercase">Insumo</TableHead>
-                  <TableHead className="text-[10px] uppercase text-center">Qtd</TableHead>
-                  <TableHead className="text-[10px] uppercase">O.S.</TableHead>
-                  <TableHead className="text-[10px] uppercase text-center">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentReleases.map((rel, i) => (
-                  <TableRow key={i}>
-                    <TableCell className="text-sm">{rel.date}</TableCell>
-                    <TableCell className="text-sm font-bold">{rel.site}</TableCell>
-                    <TableCell className="text-sm">{rel.insumo}</TableCell>
-                    <TableCell className="text-center font-bold">{rel.qty}</TableCell>
-                    <TableCell className="font-mono text-sm">{rel.os}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge className="text-[9px] uppercase">{rel.status}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <footer className="text-center text-xs text-muted-foreground py-4 border-t border-border uppercase tracking-wider">
-          © 2024 ERP Insumos. Chromatix Ledger Design System.
-        </footer>
       </div>
     </OperatorLayout>
   );

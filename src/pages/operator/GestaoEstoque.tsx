@@ -3,204 +3,304 @@ import { OperatorLayout } from "@/components/layout/OperatorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { PlusCircle, FileText, Pencil, Filter, CheckCircle, Clock, ArrowDownToLine } from "lucide-react";
+import {
+  FileText, Palette, Settings, Filter, ArrowRight, Package, RefreshCw, LogOut, Wrench,
+  PenLine, PlusSquare,
+} from "lucide-react";
 
 const inventory = [
-  { site: "Prédio Administrativo", papel: "1.200", toner: 45, status: "normal" },
-  { site: "Unidade Logística Oeste", papel: "350", toner: 8, status: "critico" },
-  { site: "Campus Educacional Leste", papel: "2.840", toner: 112, status: "normal" },
+  { site: "Prédio Administrativo - Centro", contrato: "#2024-001", responsavel: "Marcos Oliveira", dataEntrada: "14/10/2024", papel: "1.200", toner: "45", status: "normal" },
+  { site: "Unidade Logística Oeste", contrato: "#2024-005", responsavel: "Juliana Costa", dataEntrada: "11/10/2024", papel: "350", toner: "8", status: "critico" },
+  { site: "Campus Educacional Leste", contrato: "#2023-088", responsavel: "Fernando Mendes", dataEntrada: "13/10/2024", papel: "2.840", toner: "112", status: "normal" },
+  { site: "Central de Atendimento", contrato: "#2024-012", responsavel: "Aline Souza", dataEntrada: "09/10/2024", papel: "50", toner: "3", status: "critico" },
 ];
 
-const replenishments = [
-  { title: "+25 Toners", site: "Prédio Administrativo", time: "Hoje, 10:45 • Por: Admin", icon: CheckCircle },
-  { title: "+100 Resmas A4", site: "Campus Leste", time: "Ontem, 16:30 • Por: Logística", icon: CheckCircle },
-  { title: "Ajuste: -2 Unid.", site: "Unidade Oeste", time: "Ontem, 09:15 • Inventário", icon: Clock },
+const movements = [
+  {
+    type: "os" as const,
+    osNumber: "O.S. #2024-4482",
+    items: [
+      { name: "Toner Magenta HP-CF", qty: "+25 unid.", resp: "Carlos M.", time: "Hoje, 10:45" },
+      { name: "Toner Cyan HP-CF", qty: "+25 unid.", resp: "Carlos M.", time: "Hoje, 10:45" },
+    ],
+  },
+  {
+    type: "auto" as const,
+    title: "Baixa Automática",
+    badge: "Consumo",
+    desc: "Relatório Site Sorocaba - Toner K",
+    detail: "-1 unid. • Sistema • Hoje, 09:12",
+  },
+  {
+    type: "exit" as const,
+    title: "Saída por Requisição",
+    badge: "Saída",
+    desc: "Solicitação #REQ-294 - Papel A4",
+    detail: "-20 resmas • Resp: Ricardo • Ontem, 16:30",
+  },
+  {
+    type: "os" as const,
+    osNumber: "Manutenção #M-9021",
+    items: [
+      { name: "Kit de Fusão 110V", qty: "-1 unid.", resp: "Pedro L.", time: "Ontem, 14:15" },
+    ],
+  },
 ];
 
 export default function GestaoEstoque() {
-  const [localidade, setLocalidade] = useState("");
-  const [insumo, setInsumo] = useState("");
+  const [clienteFilter, setClienteFilter] = useState("todos");
+  const [tipoFilter, setTipoFilter] = useState("todos");
 
   return (
     <OperatorLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Gestão de Estoque</h1>
-          <p className="text-muted-foreground text-sm mt-1">Reposição direta de insumos por localidade e contrato.</p>
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex justify-between items-end">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight">Estoque Virtual</h1>
+            <p className="text-muted-foreground">Gestão centralizada de insumos e saldos por localidade.</p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="gap-2">
+              <PenLine className="h-4 w-4" />
+              Ajuste Manual
+            </Button>
+            <Button className="gap-2">
+              <PlusSquare className="h-4 w-4" />
+              Entrada de Estoque
+            </Button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Reposição Direta */}
+        {/* Global Balance Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardContent className="p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <PlusCircle className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-bold">Reposição Direta</h2>
+              <div className="flex justify-between items-start">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Papel A4 / A3</span>
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <FileText className="h-5 w-5" />
+                </div>
               </div>
-
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Localidade / Site</Label>
-                  <Select value={localidade} onValueChange={setLocalidade}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Selecione o destino..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pred-adm">Prédio Administrativo</SelectItem>
-                      <SelectItem value="uni-oeste">Unidade Logística Oeste</SelectItem>
-                      <SelectItem value="campus-leste">Campus Educacional Leste</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold">14.280</span>
+                  <span className="text-sm text-muted-foreground">resmas</span>
                 </div>
-
-                <div>
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Insumo</Label>
-                  <Select value={insumo} onValueChange={setInsumo}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Selecione o item..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="papel-a4">Papel A4 75g</SelectItem>
-                      <SelectItem value="toner-hp">Toner HP CF226X</SelectItem>
-                      <SelectItem value="cilindro">Cilindro DR-313</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-primary rounded-full" style={{ width: "72%" }} />
                 </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Quantidade</Label>
-                    <Input type="number" defaultValue={0} className="mt-1" />
-                  </div>
-                  <div>
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Data</Label>
-                    <Input type="date" className="mt-1" />
-                  </div>
+                <div className="mt-2 flex justify-between text-[10px] text-muted-foreground uppercase font-bold">
+                  <span>Última Entrada: 12/10/24</span>
+                  <span>Resp: Carlos M.</span>
                 </div>
-
-                <Button className="w-full gap-2 mt-2">
-                  <ArrowDownToLine className="h-4 w-4" />
-                  Confirmar Entrada
-                </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Global Cards */}
-          <div className="space-y-4">
-            <Card>
-              <CardContent className="p-5 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Estoque Global A4</p>
-                  <div className="flex items-baseline gap-1.5 mt-1">
-                    <span className="text-3xl font-bold">14.280</span>
-                    <span className="text-sm text-muted-foreground">RESMAS</span>
-                  </div>
-                </div>
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Estoque Global Toners</p>
-                  <div className="flex items-baseline gap-1.5 mt-1">
-                    <span className="text-3xl font-bold">842</span>
-                    <span className="text-sm text-muted-foreground">UNID.</span>
-                  </div>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <Pencil className="h-4 w-4 text-muted-foreground" />
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Saldos por Localidade */}
           <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Toners & Tintas</span>
+                <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary-foreground">
+                  <Palette className="h-5 w-5" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold">842</span>
+                  <span className="text-sm text-muted-foreground">unid.</span>
+                </div>
+                <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-secondary rounded-full" style={{ width: "45%" }} />
+                </div>
+                <div className="mt-2 flex justify-between text-[10px] text-muted-foreground uppercase font-bold">
+                  <span>Última Entrada: 14/10/24</span>
+                  <span>Resp: Ana Silva</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Cilindros & Peças</span>
+                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
+                  <Settings className="h-5 w-5" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold">156</span>
+                  <span className="text-sm text-muted-foreground">unid.</span>
+                </div>
+                <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-full bg-destructive rounded-full" style={{ width: "15%" }} />
+                </div>
+                <div className="mt-2 flex justify-between text-[10px] text-destructive uppercase font-bold">
+                  <span>Última Entrada: 05/10/24</span>
+                  <span>Resp: Roberto J.</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-4 bg-muted/50 p-4 rounded-lg border border-border/50">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-semibold">Filtros:</span>
+          </div>
+          <Select value={clienteFilter} onValueChange={setClienteFilter}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Todos os Clientes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Clientes</SelectItem>
+              <SelectItem value="pref">Prefeitura Municipal de SP</SelectItem>
+              <SelectItem value="banco">Banco Central Unidade Sul</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={tipoFilter} onValueChange={setTipoFilter}>
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Tipo de Item" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Tipo de Item</SelectItem>
+              <SelectItem value="papel">Papel A4</SelectItem>
+              <SelectItem value="toner-k">Toner Preto</SelectItem>
+              <SelectItem value="toner-c">Toner Color</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="link" className="ml-auto text-sm text-primary font-semibold">Limpar Filtros</Button>
+        </div>
+
+        {/* Table + Movements */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Saldos Table */}
+          <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold">Saldos Atuais por Localidade</CardTitle>
-                <Button variant="ghost" size="icon"><Filter className="h-4 w-4" /></Button>
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg font-bold">Saldos por Site / Contrato</CardTitle>
+                <Button variant="link" className="text-sm text-primary gap-1">
+                  Ver Detalhes <ArrowRight className="h-3 w-3" />
+                </Button>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-[10px] uppercase">Site</TableHead>
-                    <TableHead className="text-[10px] uppercase text-right">Papel</TableHead>
-                    <TableHead className="text-[10px] uppercase text-right">Toner</TableHead>
-                    <TableHead className="text-[10px] uppercase text-center">Status</TableHead>
+                    <TableHead className="text-[11px] uppercase font-bold tracking-wider">Site / Localidade</TableHead>
+                    <TableHead className="text-[11px] uppercase font-bold tracking-wider">Responsável</TableHead>
+                    <TableHead className="text-[11px] uppercase font-bold tracking-wider text-center">Data Entrada</TableHead>
+                    <TableHead className="text-[11px] uppercase font-bold tracking-wider text-right">Saldos</TableHead>
+                    <TableHead className="text-[11px] uppercase font-bold tracking-wider text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {inventory.map((inv, i) => (
-                    <TableRow key={i}>
-                      <TableCell className="text-sm font-medium">{inv.site}</TableCell>
-                      <TableCell className="text-right font-mono text-sm">{inv.papel}</TableCell>
-                      <TableCell className="text-right font-mono text-sm">{inv.toner}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge
-                          variant={inv.status === "critico" ? "destructive" : "default"}
-                          className="text-[9px] uppercase"
-                        >
-                          {inv.status === "critico" ? "Crítico" : "Normal"}
+                    <TableRow key={i} className="hover:bg-muted/30">
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold">{inv.site}</span>
+                          <span className="text-[10px] text-muted-foreground">Contrato: {inv.contrato}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{inv.responsavel}</TableCell>
+                      <TableCell className="text-center text-sm text-muted-foreground">{inv.dataEntrada}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-mono">P: {inv.papel}</span>
+                          <span className="text-[10px] font-mono text-muted-foreground">T: {inv.toner}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant={inv.status === "critico" ? "destructive" : "default"} className="text-[10px] uppercase">
+                          {inv.status === "critico" ? "Crítico" : "Abastecido"}
                         </Badge>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-              <Button variant="link" className="w-full mt-2 text-primary text-sm">
-                VER RELATÓRIO COMPLETO
-              </Button>
             </CardContent>
           </Card>
+
+          {/* Movimentações Recentes */}
+          <Card className="bg-muted/30">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-bold">Movimentações Recentes</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 max-h-[420px] overflow-y-auto">
+              {movements.map((mov, i) => {
+                if (mov.type === "os") {
+                  return (
+                    <div key={i} className="space-y-3 bg-card/50 p-3 rounded-lg border border-border/30">
+                      <div className="flex justify-between items-center border-b border-border/30 pb-2">
+                        <div className="flex items-center gap-2">
+                          {mov.osNumber?.startsWith("Manutenção") ? (
+                            <Wrench className="h-4 w-4 text-primary" />
+                          ) : (
+                            <Package className="h-4 w-4 text-primary" />
+                          )}
+                          <span className="text-xs font-bold">{mov.osNumber}</span>
+                        </div>
+                        <Badge variant="outline" className="text-[9px] uppercase text-primary border-primary/20 bg-primary/5">
+                          Lote OS-2024
+                        </Badge>
+                      </div>
+                      <div className="space-y-3 pl-1">
+                        {mov.items?.map((item, j) => (
+                          <div key={j} className="flex gap-3 items-start">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-[11px] font-semibold leading-tight">{item.name}</p>
+                              <div className="flex justify-between items-center">
+                                <p className="text-[10px] text-muted-foreground">{item.qty} • Resp: {item.resp}</p>
+                                <p className="text-[9px] text-muted-foreground font-medium">{item.time}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+                return (
+                  <div key={i} className="flex gap-3 items-start px-1">
+                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                      {mov.type === "auto" ? (
+                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <LogOut className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="space-y-1 flex-1">
+                      <div className="flex justify-between items-start">
+                        <span className="text-sm font-bold">{mov.title}</span>
+                        <Badge variant="secondary" className="text-[9px] uppercase">{mov.badge}</Badge>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground leading-tight">{mov.desc}</p>
+                      <p className="text-[10px] text-muted-foreground">{mov.detail}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </CardContent>
+            <div className="p-4 border-t border-border">
+              <Button variant="outline" className="w-full text-sm font-bold">
+                Ver Histórico Completo
+              </Button>
+            </div>
+          </Card>
         </div>
-
-        {/* Histórico */}
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-bold">Histórico de Reposições</CardTitle>
-              <span className="text-xs text-muted-foreground">Últimos 7 dias</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {replenishments.map((rep, i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-accent/30">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-                    <rep.icon className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold">{rep.title}</p>
-                    <p className="text-xs text-muted-foreground">{rep.site}</p>
-                    <p className="text-[10px] text-muted-foreground">{rep.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <footer className="flex items-center justify-between text-xs text-muted-foreground py-4 border-t border-border">
-          <span>© 2024 ERP Insumos. Todos os direitos reservados.</span>
-          <div className="flex gap-4">
-            <span>Termos de Uso</span>
-            <span>Privacidade</span>
-            <span>Suporte</span>
-          </div>
-        </footer>
       </div>
     </OperatorLayout>
   );
