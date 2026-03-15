@@ -43,11 +43,11 @@ export default function Usuarios() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={() => navigate("/permissoes")}>
               <Shield className="h-4 w-4" />
               Editar Permissões
             </Button>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => navigate("/permissoes")}>
               <UserPlus className="h-4 w-4" />
               Novo Usuário
             </Button>
