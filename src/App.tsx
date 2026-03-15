@@ -38,6 +38,7 @@ const App = () => (
             <Route path="/permissoes" element={<AdminGuard><Permissoes /></AdminGuard>} />
             <Route path="/insumos" element={<AdminGuard><Insumos /></AdminGuard>} />
             <Route path="/estoque" element={<AdminGuard><Estoque /></AdminGuard>} />
+            <Route path="/gestao-ativos" element={<AdminGuard><GestaoAtivos /></AdminGuard>} />
             {/* Operator routes */}
             <Route path="/op/visao-geral" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/estoque" element={<OperatorGuard><GestaoEstoque /></OperatorGuard>} />
