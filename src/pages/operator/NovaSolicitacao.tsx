@@ -7,328 +7,344 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search, Printer, AlertTriangle, Lock, Minus, Plus, Package } from "lucide-react";
+import {
+  Search, Printer, History, TrendingUp, TrendingDown, Flag, Lock, ShieldAlert,
+  RefreshCw, FileText, AlertTriangle,
+} from "lucide-react";
 
 const tonerItems = [
-  { name: "Toner HP CF360A (Black)", rendimento: "6.000 PÁGS", color: "bg-foreground", checked: false },
-  { name: "Toner HP CF361A (Cyan)", rendimento: "5.000 PÁGS", color: "bg-cyan-500", checked: false },
-  { name: "Toner HP CF363A (Magenta)", rendimento: "5.000 PÁGS", color: "bg-pink-500", checked: false },
-  { name: "Toner HP CF362A (Yellow)", rendimento: "5.000 PÁGS", color: "bg-yellow-400", checked: false },
+  {
+    name: "Toner HP CF360A (Black)", color: "bg-foreground", rendimento: "6.000",
+    ultimoContador: "42.100", producaoReal: "8.330", checked: false, qty: 1,
+  },
+  {
+    name: "Toner HP CF361A (Cyan)", color: "bg-cyan-500", rendimento: "5.000",
+    ultimoContador: "45.000", producaoReal: "5.430", checked: false, qty: 1,
+  },
 ];
 
-const cilindroItems = [
-  { name: "Kit de Cilindro de Imagem HP", rendimento: "30.000 PÁGS", color: "bg-muted-foreground" },
-];
+function PaletteIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="8" r="1.5" fill="currentColor" /><circle cx="8" cy="12" r="1.5" fill="currentColor" /><circle cx="16" cy="12" r="1.5" fill="currentColor" /><circle cx="12" cy="16" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
 
 export default function NovaSolicitacao() {
-  const [patrimonio, setPatrimonio] = useState("ERP-22345");
-  const [equipFound, setEquipFound] = useState(true);
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [search, setSearch] = useState("ERP-22345");
   const [contadorT, setContadorT] = useState("50430");
   const [contadorFV, setContadorFV] = useState("1200");
+  const [items, setItems] = useState(tonerItems);
 
-  const getQty = (name: string) => quantities[name] || 1;
-  const setQty = (name: string, v: number) => setQuantities((prev) => ({ ...prev, [name]: Math.max(0, v) }));
+  const toggleItem = (idx: number) => {
+    setItems(prev => prev.map((it, i) => i === idx ? { ...it, checked: !it.checked } : it));
+  };
 
-  const saldoEstimado = 1200;
-  const limiteReposicao = 500;
-  const consumoPercent = 24;
-  const blocked = saldoEstimado > limiteReposicao;
+  const updateQty = (idx: number, delta: number) => {
+    setItems(prev => prev.map((it, i) => i === idx ? { ...it, qty: Math.max(0, it.qty + delta) } : it));
+  };
 
   return (
     <OperatorLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Nova Solicitação de Insumos</h1>
-          <p className="text-muted-foreground text-sm mt-1">Inicie um novo pedido pesquisando o equipamento pelo seu identificador.</p>
-        </div>
+      <div className="space-y-8 max-w-7xl mx-auto">
+        <header className="mb-2">
+          <h1 className="text-4xl font-black tracking-tight mb-2">Nova Solicitação de Insumos</h1>
+          <p className="text-muted-foreground font-medium text-lg">Inicie um novo pedido pesquisando o equipamento pelo seu identificador.</p>
+        </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            {/* Search Equipment */}
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Localizar Equipamento</p>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      value={patrimonio}
-                      onChange={(e) => setPatrimonio(e.target.value)}
-                      className="pl-9"
-                    />
+        {/* Search & O.S. */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 bg-primary/5 rounded-2xl p-6 border-2 border-primary/20">
+            <Label className="text-xs font-black uppercase tracking-widest text-primary mb-3 block">Localizar Equipamento</Label>
+            <div className="relative">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-14 pr-6 py-4 text-lg font-medium rounded-2xl border-2 border-primary/20 bg-card h-14"
+                placeholder="Patrimônio ou Série..."
+              />
+            </div>
+            <p className="mt-2 text-xs font-medium text-muted-foreground">
+              Resultado: <span className="text-primary font-bold">HP Color LaserJet Enterprise M553</span>
+            </p>
+          </div>
+          <Card className="rounded-2xl border-2">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Nº O.S. / Chamado</Label>
+                <span className="text-destructive font-black text-xs">* Obrigatório</span>
+              </div>
+              <Input className="text-lg font-bold h-14 rounded-xl" placeholder="Ex: 2024-0988" required />
+            </CardContent>
+          </Card>
+        </section>
+
+        <div className="grid grid-cols-12 gap-8">
+          {/* Left Column */}
+          <div className="col-span-12 lg:col-span-8 space-y-8">
+            {/* Equipment Info */}
+            <Card className="rounded-2xl">
+              <CardContent className="p-8">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-8">
+                  <div className="flex items-start gap-5">
+                    <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0">
+                      <Printer className="h-10 w-10 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Equipamento Identificado (COLOR)</p>
+                      <h2 className="text-3xl font-black tracking-tight mb-2">HP Color LaserJet M553</h2>
+                      <div className="flex flex-wrap gap-4">
+                        <span className="text-sm bg-muted px-3 py-1 rounded-lg font-bold text-muted-foreground">
+                          Patrimônio: <span className="text-foreground">ERP-22345</span>
+                        </span>
+                        <span className="text-sm bg-muted px-3 py-1 rounded-lg font-bold text-muted-foreground">
+                          Série: <span className="text-foreground">JPB2G03412</span>
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <Button variant="outline" size="sm">ENTER</Button>
+                  <Badge className="bg-green-50 text-green-700 border-green-200 gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> ONLINE
+                  </Badge>
                 </div>
-                {equipFound && (
-                  <p className="text-xs text-muted-foreground">
-                    Resultado: <span className="text-primary font-medium">HP Color LaserJet Enterprise M553</span>
-                  </p>
-                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8 border-t border-border">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Cliente / Faturamento</p>
+                    <p className="text-xl font-bold">Indústrias Metalúrgicas S.A.</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Localização / Unidade</p>
+                    <p className="text-xl font-bold">Escritório Central - TI</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-
-            {/* Equipment Identified */}
-            {equipFound && (
-              <Card>
-                <CardContent className="p-5">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-primary mb-3">Equipamento Identificado (Color)</p>
-                  <div className="flex items-start gap-4">
-                    <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <Printer className="h-7 w-7 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold">HP Color LaserJet M553</h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-[10px]">Patrimônio: ERP-22345</Badge>
-                        <Badge variant="outline" className="text-[10px]">Série: JPB2G03412</Badge>
-                        <Badge className="text-[10px] bg-green-100 text-green-700 border-0">● ONLINE</Badge>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 mt-3 text-xs">
-                        <div>
-                          <p className="text-muted-foreground uppercase tracking-wider text-[10px]">Cliente / Faturamento</p>
-                          <p className="font-semibold">Indústrias Metalúrgicas S.A.</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground uppercase tracking-wider text-[10px]">Localização / Unidade</p>
-                          <p className="font-semibold">Escritório Central - TI</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Counter Readings */}
-            <Card>
-              <CardContent className="p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary">⚡</span>
-                    <p className="text-[10px] font-bold uppercase tracking-wider">Leitura de Contadores</p>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] text-primary">⟳ Processando Regras</Badge>
+            <Card className="rounded-2xl">
+              <CardContent className="p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                    <FileText className="h-4 w-4" /> Leitura de Contadores
+                  </h3>
+                  <Badge variant="outline" className="text-[10px] gap-1 text-primary border-primary/20 bg-primary/5">
+                    <RefreshCw className="h-3 w-3 animate-spin" /> PROCESSANDO REGRAS
+                  </Badge>
                 </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label className="text-xs text-muted-foreground">Numerador Painel</Label>
-                    <Input placeholder="Ex: 50200" className="mt-1" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-bold">Numerador Painel</Label>
+                    <Input type="number" placeholder="Ex: 50200" className="rounded-xl h-12" />
                   </div>
-                  <div>
-                    <Label className="text-xs text-muted-foreground">
-                      Contador Total (T) <span className="text-destructive">*</span>
-                    </Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-bold">Contador Total (T)</Label>
+                      <span className="text-destructive font-black">*</span>
+                    </div>
                     <Input
-                      value={contadorT}
-                      onChange={(e) => setContadorT(e.target.value)}
-                      className="mt-1 border-primary text-primary font-bold"
+                      type="number" value={contadorT} onChange={(e) => setContadorT(e.target.value)}
+                      className="rounded-xl h-12 border-2 border-primary/20 font-mono font-bold text-primary text-lg"
                     />
                   </div>
-                  <div>
-                    <Label className="text-xs text-muted-foreground">
-                      Contador FV (FV) <span className="text-destructive">*</span>
-                    </Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-bold">Contador FV (FV)</Label>
+                      <span className="text-destructive font-black">*</span>
+                    </div>
                     <Input
-                      value={contadorFV}
-                      onChange={(e) => setContadorFV(e.target.value)}
-                      className="mt-1"
+                      type="number" value={contadorFV} onChange={(e) => setContadorFV(e.target.value)}
+                      className="rounded-xl h-12 border-2 border-primary/20 font-mono font-bold text-primary text-lg"
                     />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Toner Selection */}
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                  ⚙ Seleção de Itens (Toner Color)
-                </p>
-                <div className="space-y-2">
-                  {tonerItems.map((item) => (
-                    <div key={item.name} className="flex items-center gap-3 p-3 rounded-lg border border-border">
-                      <Checkbox />
-                      <div className={`h-8 w-8 rounded-lg ${item.color} flex items-center justify-center`}>
-                        <Package className="h-4 w-4 text-white" />
+            {/* Supply Items */}
+            <Card className="rounded-2xl">
+              <CardContent className="p-8">
+                <h3 className="text-xs font-black uppercase tracking-widest text-primary flex items-center gap-2 mb-8">
+                  <FileText className="h-4 w-4" /> Seleção de Itens (Toner Color)
+                </h3>
+                <div className="space-y-4">
+                  {items.map((item, idx) => (
+                    <label key={idx} className="flex flex-col gap-4 p-5 rounded-2xl hover:bg-muted/30 transition-all border border-border cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-5">
+                          <Checkbox checked={item.checked} onCheckedChange={() => toggleItem(idx)} className="w-6 h-6" />
+                          <div className={`w-12 h-12 rounded-xl ${item.color} flex items-center justify-center text-white`}>
+                            <PaletteIcon className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="font-black">{item.name}</p>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase">Rendimento: {item.rendimento} págs</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center bg-muted rounded-lg p-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.preventDefault(); updateQty(idx, -1); }}>-</Button>
+                          <span className="w-8 text-center font-black">{item.qty}</span>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.preventDefault(); updateQty(idx, 1); }}>+</Button>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold">{item.name}</p>
-                        <p className="text-[10px] text-muted-foreground">RENDIMENTO: {item.rendimento}</p>
+                      <div className="flex flex-wrap gap-4 pt-4 border-t border-border text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                        <div className="flex items-center gap-2">
+                          <History className="h-3.5 w-3.5" />
+                          Contador Última Entrega: <span className="text-foreground">{item.ultimoContador}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-3.5 w-3.5" />
+                          Produção Real: <span className="text-primary">{item.producaoReal} págs</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setQty(item.name, getQty(item.name) - 1)}>
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-6 text-center text-sm font-bold">{getQty(item.name)}</span>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setQty(item.name, getQty(item.name) + 1)}>
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
+                    </label>
                   ))}
+
+                  {/* Paper - Blocked */}
+                  <div className="pt-6 border-t border-border">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-4">Mídias e Papel</h4>
+                    <div className="flex flex-col gap-4 p-5 rounded-2xl bg-destructive/5 ring-1 ring-destructive/20 border-l-[6px] border-destructive">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-5">
+                          <Checkbox disabled className="w-6 h-6" />
+                          <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center text-destructive">
+                            <FileText className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-3">
+                              <p className="font-black">Papel A4 Alkaline 75g (Caixa)</p>
+                              <Badge variant="destructive" className="text-[8px] uppercase">Bloqueado</Badge>
+                            </div>
+                            <p className="text-[10px] text-destructive font-bold">Produção insuficiente para nova remessa.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center bg-muted rounded-lg p-1 opacity-50">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" disabled>-</Button>
+                          <span className="w-8 text-center font-black">0</span>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" disabled>+</Button>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-4 pt-4 border-t border-destructive/10 text-[10px] font-bold uppercase tracking-wider text-destructive/80">
+                        <div className="flex items-center gap-2">
+                          <History className="h-3.5 w-3.5" /> Último Contador: <span className="text-foreground">49.200</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Flag className="h-3.5 w-3.5" /> Meta de Liberação: <span className="text-foreground">4.000 págs</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TrendingDown className="h-3.5 w-3.5" /> Produção Real: <span className="text-destructive font-black">1.230 págs</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-4">
-                  Cilindros de Imagem
-                </p>
-                {cilindroItems.map((item) => (
-                  <div key={item.name} className="flex items-center gap-3 p-3 rounded-lg border border-border">
-                    <Checkbox />
-                    <div className={`h-8 w-8 rounded-lg ${item.color} flex items-center justify-center`}>
-                      <Package className="h-4 w-4 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold">{item.name}</p>
-                      <p className="text-[10px] text-muted-foreground">RENDIMENTO: {item.rendimento}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-7 w-7"><Minus className="h-3 w-3" /></Button>
-                      <span className="w-6 text-center text-sm font-bold">1</span>
-                      <Button variant="ghost" size="icon" className="h-7 w-7"><Plus className="h-3 w-3" /></Button>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Paper - Blocked */}
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-4">
-                  Mídias e Papel
-                </p>
-                <div className="flex items-center gap-3 p-3 rounded-lg border border-destructive/30 bg-destructive/5">
-                  <Checkbox disabled />
-                  <div className="h-8 w-8 rounded-lg bg-destructive/20 flex items-center justify-center">
-                    <Package className="h-4 w-4 text-destructive" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold">Papel A4 Alkaline 75g (Caixa)</p>
-                    <p className="text-[10px] text-destructive font-medium">
-                      <Badge variant="destructive" className="text-[9px] mr-1">BLOQUEADO</Badge>
-                      Consumo 80% não atingido (Atual: {consumoPercent}%).
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 opacity-40">
-                    <Button variant="ghost" size="icon" className="h-7 w-7" disabled><Minus className="h-3 w-3" /></Button>
-                    <span className="w-6 text-center text-sm font-bold">0</span>
-                    <Button variant="ghost" size="icon" className="h-7 w-7" disabled><Plus className="h-3 w-3" /></Button>
-                  </div>
+                {/* Justification */}
+                <div className="mt-8 p-6 bg-muted/50 rounded-2xl border border-border">
+                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3 block">
+                    Justificativa para Liberação Excepcional
+                  </Label>
+                  <Textarea
+                    placeholder="Caso o bloqueio de papel ou toners deva ser ignorado, descreva o motivo técnico..."
+                    className="min-h-[100px] rounded-xl"
+                  />
+                  <p className="mt-2 text-[10px] text-muted-foreground italic font-medium">Sujeito a aprovação do gestor via Workflow.</p>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Justification */}
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider">
-                  Justificativa para Liberação Excepcional
-                </p>
-                <Textarea
-                  placeholder="Caso o bloqueio de papel ou toners deva ser ignorado, descreva o motivo técnico..."
-                  className="min-h-20"
-                />
-                <p className="text-[10px] text-muted-foreground italic">Sujeito à aprovação do gestor.</p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Sidebar */}
-          <div className="space-y-4">
-            {/* O.S. */}
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Nº O.S. / Chamado</Label>
-                  <span className="text-[10px] text-destructive font-bold">* Obrigatório</span>
+          {/* Right Column */}
+          <div className="col-span-12 lg:col-span-4 space-y-8">
+            {/* Rules Panel */}
+            <Card className="bg-destructive text-destructive-foreground rounded-2xl shadow-2xl relative overflow-hidden">
+              <CardContent className="p-8 relative z-10">
+                <div className="absolute -right-6 -top-6 opacity-10">
+                  <ShieldAlert className="h-40 w-40" />
                 </div>
-                <Input placeholder="Ex: 2024-0988" className="mt-2" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-8 border-b border-white/20 pb-4">Motor de Regras: Análise</h3>
+                <div className="mb-8">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="bg-white/20 p-2 rounded-xl">
+                      <AlertTriangle className="h-8 w-8" />
+                    </div>
+                    <div>
+                      <span className="text-3xl font-black tracking-tight block uppercase">Bloqueado</span>
+                      <span className="text-[10px] font-bold uppercase opacity-80">Validação de Consumo</span>
+                    </div>
+                  </div>
+                  <p className="text-sm opacity-95 leading-relaxed font-semibold">
+                    O item Papel foi suspenso. O cálculo aponta saldo remanescente superior ao limite contratual para reposição.
+                  </p>
+                </div>
+                <div className="space-y-4">
+                  <div className="bg-black/10 p-4 rounded-xl space-y-3">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="opacity-70 font-bold uppercase">Regra de Cálculo</span>
+                      <span className="font-mono font-bold">Saldo = T - (FV / 2)</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center p-4 bg-white/10 rounded-xl border border-white/20">
+                    <span className="text-xs font-bold uppercase">Saldo Estimado</span>
+                    <span className="text-xl font-black">1.200 <span className="text-xs opacity-70 uppercase">FLS</span></span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 bg-black/20 rounded-xl">
+                    <div className="flex items-center gap-2">
+                      <Flag className="h-4 w-4" />
+                      <span className="text-xs font-black uppercase">Limite Reposição</span>
+                    </div>
+                    <span className="font-black text-lg">≤ 500 <span className="text-xs opacity-70 uppercase">FLS</span></span>
+                  </div>
+                </div>
+                <div className="mt-8 pt-6 border-t border-white/20">
+                  <p className="text-[11px] font-medium italic">Baseado na Regra de Consumo 80% do Contrato.</p>
+                </div>
               </CardContent>
             </Card>
 
-            {/* Motor de Regras */}
-            <Card className="bg-destructive/5 border-destructive/20">
-              <CardContent className="p-5 space-y-3">
-                <div className="text-center">
-                  <AlertTriangle className="h-8 w-8 text-destructive mx-auto" />
-                  <p className="text-lg font-black text-destructive mt-1">BLOQUEADO</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Validação de Consumo</p>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  O item Papel foi suspenso. O cálculo aponta saldo remanescente superior a 500 folhas.
-                </p>
-
-                <div className="bg-card rounded-lg p-3 flex items-center justify-between">
+            {/* Consumption Metrics */}
+            <Card className="rounded-2xl">
+              <CardContent className="p-8">
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-8">Status do Consumo (Regra 80%)</h3>
+                <div className="space-y-8">
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Regra de Cálculo</p>
+                    <div className="flex justify-between items-end mb-3">
+                      <div>
+                        <span className="block text-xs font-black text-muted-foreground uppercase">Produção Real (Papel)</span>
+                        <span className="text-3xl font-black text-destructive">30.7%</span>
+                      </div>
+                      <Badge variant="destructive" className="text-[10px] uppercase">Abaixo da Meta</Badge>
+                    </div>
+                    <div className="h-4 w-full bg-muted rounded-full overflow-hidden p-1 border border-border">
+                      <div className="h-full bg-destructive rounded-full" style={{ width: "30.7%" }} />
+                    </div>
+                    <div className="flex justify-between items-center mt-4">
+                      <p className="text-[10px] text-muted-foreground font-bold italic">*Meta de Liberação: 80%</p>
+                      <span className="text-xs font-black text-destructive uppercase">Faltam 1.970 págs</span>
+                    </div>
                   </div>
-                  <p className="text-xs font-mono font-bold">Saldo = T - (FV / 2)</p>
-                </div>
-
-                <div className="bg-destructive/10 rounded-lg p-3 text-center">
-                  <p className="text-[10px] uppercase tracking-wider text-destructive font-bold">Saldo Estimado</p>
-                  <p className="text-2xl font-black text-destructive">{saldoEstimado.toLocaleString()} <span className="text-sm">FLS</span></p>
-                </div>
-
-                <div className="bg-destructive/10 rounded-lg p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Lock className="h-3 w-3 text-destructive" />
-                    <p className="text-[10px] uppercase tracking-wider text-destructive font-bold">Limite Reposição</p>
+                  <div className="p-5 bg-primary/5 rounded-2xl border-2 border-primary/10">
+                    <div className="flex justify-between items-start mb-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary">Estoque Estimado em Site</p>
+                    </div>
+                    <p className="text-2xl font-black">10 resmas <span className="text-sm font-bold text-muted-foreground">/ 2 cx</span></p>
                   </div>
-                  <p className="text-sm font-bold">≤ {limiteReposicao} <span className="text-xs">FLS</span></p>
-                </div>
-
-                <p className="text-[10px] text-destructive italic">Baseado na Regra de Consumo 80% do Contrato.</p>
-              </CardContent>
-            </Card>
-
-            {/* Consumo Status */}
-            <Card>
-              <CardContent className="p-5 space-y-3">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Status do Consumo (Regra 80%)</p>
-                <div>
-                  <p className="text-xs text-muted-foreground">Uso de Papel</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-destructive">{consumoPercent}.0%</span>
-                    <Badge variant="destructive" className="text-[9px]">INSUFICIENTE</Badge>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-1.5 mt-2">
-                    <div className="h-1.5 rounded-full bg-destructive" style={{ width: `${consumoPercent}%` }} />
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <p className="text-[10px] text-muted-foreground">•Meta para Liberação: 80%</p>
-                    <p className="text-[10px] text-destructive font-bold">FALTAM 56%</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Site Stock */}
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-center justify-between">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Estoque em Site</p>
-                  <Lock className="h-3.5 w-3.5 text-muted-foreground" />
-                </div>
-                <div className="text-center mt-2">
-                  <p className="text-3xl font-bold">10 resmas</p>
-                  <p className="text-xs text-muted-foreground">/ 2 cx</p>
                 </div>
               </CardContent>
             </Card>
 
             {/* Actions */}
-            <Button className="w-full gap-2" disabled={blocked}>
-              <Lock className="h-4 w-4" />
-              Confirmar Solicitação
-            </Button>
-            <Button variant="outline" className="w-full">
-              Descartar Pedido
-            </Button>
+            <div className="flex flex-col gap-4">
+              <Button disabled className="w-full py-6 rounded-2xl font-black text-base gap-3" variant="secondary">
+                <Lock className="h-5 w-5" /> CONFIRMAR SOLICITAÇÃO
+              </Button>
+              <Button variant="outline" className="w-full py-6 rounded-2xl font-black text-base uppercase border-2">
+                Descartar Pedido
+              </Button>
+            </div>
           </div>
         </div>
-
-        <footer className="text-center text-xs text-muted-foreground py-4 border-t border-border">
-          <strong>ERP Insumos</strong> • © 2024 Gestão de Suprimentos Inteligente.
-        </footer>
       </div>
     </OperatorLayout>
   );
