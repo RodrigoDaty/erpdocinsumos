@@ -143,7 +143,7 @@ export default function VisaoGeral() {
                 <CardTitle className="text-base font-bold">Alertas de Segurança</CardTitle>
                 <p className="text-xs text-muted-foreground">Registros de auditoria crítica e integridade do sistema.</p>
               </div>
-              <Button variant="outline" size="sm" className="gap-2 text-xs">
+              <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={notify}>
                 Ver Log Completo
               </Button>
             </div>
