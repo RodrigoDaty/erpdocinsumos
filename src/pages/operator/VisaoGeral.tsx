@@ -40,7 +40,9 @@ const skuItems = [
 ];
 
 export default function VisaoGeral() {
-  return (
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const notify = () => toast({ title: "Em desenvolvimento", description: "Esta funcionalidade será implementada em breve." });
     <OperatorLayout>
       <div className="space-y-6">
         <div>
