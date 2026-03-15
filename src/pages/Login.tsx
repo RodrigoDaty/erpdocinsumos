@@ -32,8 +32,6 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen bg-surface-container-low">
-      <title>ERP Insumos - Login</title>
-      <meta name="description" content="Acesse o portal ERP de gestão de insumos e impressão corporativa." />
 
       {/* Left Panel */}
       <div className="hidden lg:flex lg:w-[480px] xl:w-[540px] bg-primary relative flex-col justify-between p-10 overflow-hidden">
