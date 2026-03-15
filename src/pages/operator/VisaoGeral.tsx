@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { OperatorLayout } from "@/components/layout/OperatorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock, Printer, AlertTriangle, ChevronRight, Download, Filter } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const kpis = [
   { label: "PENDENTES", value: "24", sub: "Solicitações em aguardo", icon: Clock, color: "text-primary", bgColor: "bg-primary/10" },
@@ -38,6 +40,10 @@ const skuItems = [
 ];
 
 export default function VisaoGeral() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const notify = () => toast({ title: "Em desenvolvimento", description: "Esta funcionalidade será implementada em breve." });
+
   return (
     <OperatorLayout>
       <div className="space-y-6">
@@ -124,7 +130,7 @@ export default function VisaoGeral() {
                   </div>
                 </div>
               ))}
-              <Button variant="outline" className="w-full text-sm">
+              <Button variant="outline" className="w-full text-sm" onClick={notify}>
                 Ver Todas Notificações
               </Button>
             </CardContent>
@@ -139,7 +145,7 @@ export default function VisaoGeral() {
                 <CardTitle className="text-base font-bold">Alertas de Segurança</CardTitle>
                 <p className="text-xs text-muted-foreground">Registros de auditoria crítica e integridade do sistema.</p>
               </div>
-              <Button variant="outline" size="sm" className="gap-2 text-xs">
+              <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={notify}>
                 Ver Log Completo
               </Button>
             </div>

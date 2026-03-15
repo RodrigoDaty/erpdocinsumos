@@ -24,6 +24,7 @@ import RelatorioFechamento from "./pages/operator/RelatorioFechamento";
 import MovimentacaoEstoque from "./pages/operator/MovimentacaoEstoque";
 import RelatorioConsumo from "./pages/operator/RelatorioConsumo";
 import ConsumoPorCliente from "./pages/operator/ConsumoPorCliente";
+import Clientes from "./pages/operator/Clientes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,7 +59,7 @@ const App = () => (
             <Route path="/op/relatorios/movimentacao" element={<OperatorGuard><MovimentacaoEstoque /></OperatorGuard>} />
             <Route path="/op/relatorios/consumo-cliente" element={<OperatorGuard><ConsumoPorCliente /></OperatorGuard>} />
             {/* Placeholder routes */}
-            <Route path="/op/clientes" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
+            <Route path="/op/clientes" element={<OperatorGuard><Clientes /></OperatorGuard>} />
             <Route path="/op/contratos" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/sites" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/equipamentos" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />

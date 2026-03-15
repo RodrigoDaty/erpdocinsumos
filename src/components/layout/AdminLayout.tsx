@@ -26,9 +26,8 @@ const navItems = [
   { icon: Users, label: "Usuários", path: "/usuarios" },
   { icon: Shield, label: "Permissões", path: "/permissoes" },
   { icon: Printer, label: "Gestão de Ativos", path: "/gestao-ativos" },
-  { icon: Building2, label: "Unidades", path: "/unidades" },
+  { icon: FileText, label: "Insumos", path: "/insumos" },
   { icon: Package, label: "Estoque", path: "/estoque" },
-  { icon: FileText, label: "Solicitações", path: "/solicitacoes" },
 ];
 
 export function AdminLayout({ children }: { children: ReactNode }) {

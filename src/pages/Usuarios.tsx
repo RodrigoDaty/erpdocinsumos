@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ const mockUsers = [
 
 export default function Usuarios() {
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
 
   return (
     <AdminLayout>
@@ -41,11 +43,11 @@ export default function Usuarios() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={() => navigate("/permissoes")}>
               <Shield className="h-4 w-4" />
               Editar Permissões
             </Button>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => navigate("/permissoes")}>
               <UserPlus className="h-4 w-4" />
               Novo Usuário
             </Button>
@@ -86,7 +88,7 @@ export default function Usuarios() {
             <CardContent className="p-5">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acessos Pendentes</p>
               <p className="text-3xl font-bold text-destructive mt-1">14</p>
-              <Link to="#" className="text-xs text-primary font-medium hover:underline">Revisar fila</Link>
+              <Link to="/permissoes" className="text-xs text-primary font-medium hover:underline">Revisar fila</Link>
             </CardContent>
           </Card>
         </div>
