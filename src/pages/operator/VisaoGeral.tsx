@@ -1,9 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { OperatorLayout } from "@/components/layout/OperatorLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock, Printer, AlertTriangle, ChevronRight, Download, Filter } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const kpis = [
   { label: "PENDENTES", value: "24", sub: "Solicitações em aguardo", icon: Clock, color: "text-primary", bgColor: "bg-primary/10" },
