@@ -15,10 +15,15 @@ import Estoque from "./pages/Estoque";
 import GestaoAtivos from "./pages/GestaoAtivos";
 import VisaoGeral from "./pages/operator/VisaoGeral";
 import GestaoEstoque from "./pages/operator/GestaoEstoque";
-import ConsultaConsumo from "./pages/operator/ConsultaConsumo";
 import LiberacaoInsumos from "./pages/operator/LiberacaoInsumos";
 import NovaSolicitacao from "./pages/operator/NovaSolicitacao";
 import ReposicaoEstoque from "./pages/operator/ReposicaoEstoque";
+import GestaoRMAs from "./pages/operator/GestaoRMAs";
+import RelatorioExcecoes from "./pages/operator/RelatorioExcecoes";
+import RelatorioFechamento from "./pages/operator/RelatorioFechamento";
+import MovimentacaoEstoque from "./pages/operator/MovimentacaoEstoque";
+import RelatorioConsumo from "./pages/operator/RelatorioConsumo";
+import ConsumoPorCliente from "./pages/operator/ConsumoPorCliente";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,11 +47,17 @@ const App = () => (
             {/* Operator routes */}
             <Route path="/op/visao-geral" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/estoque" element={<OperatorGuard><GestaoEstoque /></OperatorGuard>} />
-            <Route path="/op/relatorios" element={<OperatorGuard><ConsultaConsumo /></OperatorGuard>} />
             <Route path="/op/solicitacoes" element={<OperatorGuard><LiberacaoInsumos /></OperatorGuard>} />
             <Route path="/op/solicitacoes/nova" element={<OperatorGuard><NovaSolicitacao /></OperatorGuard>} />
             <Route path="/op/reposicao" element={<OperatorGuard><ReposicaoEstoque /></OperatorGuard>} />
-            {/* Placeholder routes for sidebar links */}
+            {/* Report routes */}
+            <Route path="/op/relatorios" element={<OperatorGuard><RelatorioConsumo /></OperatorGuard>} />
+            <Route path="/op/relatorios/rmas" element={<OperatorGuard><GestaoRMAs /></OperatorGuard>} />
+            <Route path="/op/relatorios/excecoes" element={<OperatorGuard><RelatorioExcecoes /></OperatorGuard>} />
+            <Route path="/op/relatorios/fechamento" element={<OperatorGuard><RelatorioFechamento /></OperatorGuard>} />
+            <Route path="/op/relatorios/movimentacao" element={<OperatorGuard><MovimentacaoEstoque /></OperatorGuard>} />
+            <Route path="/op/relatorios/consumo-cliente" element={<OperatorGuard><ConsumoPorCliente /></OperatorGuard>} />
+            {/* Placeholder routes */}
             <Route path="/op/clientes" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/contratos" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
             <Route path="/op/sites" element={<OperatorGuard><VisaoGeral /></OperatorGuard>} />
