@@ -24,6 +24,7 @@ const mockUsers = [
 
 export default function Usuarios() {
   const [page, setPage] = useState(1);
+  const navigate = useNavigate();
 
   return (
     <AdminLayout>
