@@ -109,6 +109,24 @@ const initialClients: Client[] = [
     eficiencia: 94,
     status: "ativo",
   },
+  {
+    id: "4",
+    razaoSocial: "Prefeitura Municipal de Embu das Artes",
+    cnpj: "46.523.015/0001-28",
+    contrato: "CON-2026-EMB",
+    segmento: "Saúde",
+    sites: 1,
+    equipamentos: [
+      { patrimonio: "PAT-22895", modelo: "MULT. OKI DATA ES4172LP P/B", serie: "AK88017432B0", localizacao: "PM EMBU-SAUDE-CER Centro Espec. em Reabilitação", contador: "15.000", status: "online" },
+    ],
+    estoque: [
+      { insumo: "Toner OKI ES4172 (Preto)", tipo: "Toner", saldo: 3, minimo: 2, ultimaEntrada: "15/03/2026" },
+      { insumo: "Cilindro OKI ES4172 (Preto)", tipo: "Cilindro", saldo: 1, minimo: 1, ultimaEntrada: "11/03/2026" },
+    ],
+    consumoMensal: 15000,
+    eficiencia: 125,
+    status: "ativo",
+  },
 ];
 
 type ModalType = "new" | "detail" | "delete" | null;
