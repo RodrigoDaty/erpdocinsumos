@@ -382,6 +382,7 @@ export default function Clientes() {
                     <SelectItem value="Jurídico">Jurídico</SelectItem>
                     <SelectItem value="Saúde">Saúde</SelectItem>
                     <SelectItem value="Educação">Educação</SelectItem>
+                    <SelectItem value="Governo">Governo</SelectItem>
                     <SelectItem value="Geral">Geral</SelectItem>
                   </SelectContent>
                 </Select>
