@@ -57,29 +57,9 @@ export default function Dashboard() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Status do Sistema */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Status do Sistema</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Online Agora</span>
-                <span className="text-lg font-bold text-primary">84</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: "68%" }} />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Acessos Pendentes</span>
-                <Badge variant="outline" className="font-semibold">14 solicitações</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 gap-4">
           {/* Atividade Recente */}
-          <Card className="lg:col-span-2">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Activity className="h-4 w-4" />
