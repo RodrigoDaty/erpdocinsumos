@@ -59,7 +59,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 gap-4">
           {/* Atividade Recente */}
-          <Card className="lg:col-span-2">
+          <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <Activity className="h-4 w-4" />
